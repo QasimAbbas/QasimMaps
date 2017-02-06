@@ -1,24 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Text;
 
 using UnityEngine;
 
 public class TileMap : MonoBehaviour {
     public GameObject selectedUnit;
-    
     public TileType[] tileTypes;
+	//public MapGeneration createMap;
 
     int[,] tiles;
     Node[,] graph;
 
     //List<Node> currentPath = null;
 
-    int mapSizeX = 10;
-    int mapSizeY = 10;
+    int mapSizeX = 160;
+    int mapSizeY = 120;
 
-    // Use this for initialization
+    //Use this for initialization
     void Start() {
+
         //set up the selectedUnit's variable
         selectedUnit.GetComponent<Unit>().tileX = (int)selectedUnit.transform.position.x;
         selectedUnit.GetComponent<Unit>().tileY = (int) selectedUnit.transform.position.y;
@@ -78,6 +81,9 @@ public class TileMap : MonoBehaviour {
 
         return cost;
     }
+
+
+
     void GeneratePathfindingGraph() {
         //initialize the array
         graph = new Node[mapSizeX, mapSizeY];
@@ -140,13 +146,15 @@ public class TileMap : MonoBehaviour {
         }
     }
 
+
+
     void GenerateMapVisual() {
         for (int x = 0; x < mapSizeX; x++) {
             for (int y = 0; y < mapSizeY; y++) {
                 TileType tt = tileTypes[tiles[x, y]];
                 GameObject go = (GameObject)Instantiate(tt.tileVisualPrefab, new Vector3(x, y, 0), Quaternion.identity);
                 ClickableTile ct = go.GetComponent<ClickableTile>();
-
+				//go.GetComponent<Renderer> ().material.color = Color.blue;
                 ct.tileX = x;
                 ct.tileY = y;
                 ct.map = this;
@@ -183,7 +191,7 @@ public class TileMap : MonoBehaviour {
         List<Node> unvisited = new List<Node>();
 
         Node source = graph[
-                            selectedUnit.GetComponent<Unit>().tileX, 
+                            selectedUnit.GetComponent<Unit>().tileX,
                             selectedUnit.GetComponent<Unit>().tileY
                             ];
 
@@ -198,6 +206,7 @@ public class TileMap : MonoBehaviour {
         //Initialize everything Infinity distance
         //Possible some nodes can't be reached from source
         foreach(Node v in graph) {
+			print ("Initializing node: " + v);
             if(v != source) {
                 dist[v] = Mathf.Infinity;
                 prev[v] = null;
@@ -212,11 +221,33 @@ public class TileMap : MonoBehaviour {
 
             //u is going to be the unvisited node with the smallest distance
             Node u = null;
+			print ("Visting Node: " + unvisited.Count);
 
             foreach(Node possibleU in unvisited) {
                 if (u == null || dist[possibleU] < dist[u]) {
                     u = possibleU;
-                }
+					//Change Color of Tile at Coord
+					print("Checking Possible Node " + u);
+					Vector3 position = TileCoordToWorldCoord(u.x, u.y);
+					//GameObject tileUnit = selectedUnit;
+					//tileUnit.GetComponent<MeshRenderer> ().material.color = Color.red;
+					//GameObject tileAtCoord = Object.Instantiate (tileUnit, position, Quaternion.identity);
+
+					Object[] objs = Object.FindObjectsOfType(typeof(GameObject));
+					GameObject myObject = null;
+					foreach (GameObject go in objs) {
+						if (go.transform.position == position) {
+							print ("Searching for object");
+							myObject = go;
+							break;
+						}
+					}
+
+					myObject.GetComponent<Renderer> ().material.color = Color.red;
+
+				}
+
+
             }
                 
             if (u == goal) {
@@ -260,6 +291,7 @@ public class TileMap : MonoBehaviour {
         selectedUnit.GetComponent<Unit>().currentPath = currentPath;
     
     }
+
 
 	// Update is called once per frame
 	void Update () {

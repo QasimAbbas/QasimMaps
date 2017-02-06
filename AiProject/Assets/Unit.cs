@@ -17,6 +17,8 @@ public class Unit : MonoBehaviour {
                     + new Vector3(0, 0, -1f);
                 Vector3 end = map.TileCoordToWorldCoord(currentPath[currNode+1].x, currentPath[currNode+1].y) 
                     + new Vector3(0, 0, -1f);
+
+
                 
                 Debug.DrawLine(start, end, Color.red);
 
