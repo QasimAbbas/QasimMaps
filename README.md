@@ -21,3 +21,22 @@ Algorithm: Length expansion:
       add Path to fullPath to trace back entire path craeted
      else
       return
+      
+      
+    
+    
+    
+      
+CodeBase: Algorithms
+
+* A*
+  
+
+* Weighte A*
+
+* Uniform Cost Search
+
+
+CodeBase: Heuristics
+* Manhattan Distance
+* Euclidean Distance
