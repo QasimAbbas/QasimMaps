@@ -33,19 +33,42 @@ public class MapGeneration : MonoBehaviour {
 
 
 		//Create Highways
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 4; i++) {
 			List<Node> fullPath = new List<Node> ();
 			fullPath = InitRandomPath (fullPath);
-			fullPath = PathForHighway (fullPath [fullPath.Count - 1].x, fullPath [fullPath.Count - 1].y, fullPath);
-			fullPath = PathForHighway (fullPath [fullPath.Count - 1].x, fullPath [fullPath.Count - 1].y, fullPath);
-			fullPath = PathForHighway (fullPath [fullPath.Count - 1].x, fullPath [fullPath.Count - 1].y, fullPath);
-			fullPath = PathForHighway (fullPath [fullPath.Count - 1].x, fullPath [fullPath.Count - 1].y, fullPath);
-			fullPath = PathForHighway (fullPath [fullPath.Count - 1].x, fullPath [fullPath.Count - 1].y, fullPath);
-		
+			List<Node> temp = new List<Node> ();
+
+
+			//bool valid = true;
+
+//			int count = 5;
+//			while (count > 0) {
+			//temp = PathForHighway (fullPath [fullPath.Count - 1].x, fullPath [fullPath.Count - 1].y);
+			/*
+				for (int h = temp.Count-1; h < temp.Count - 20; h--) {
+					if (temp [h].x < 0 || temp [h].x > 160 || temp [h].y > 120 || temp [h].y < 0) {
+						print ("Found a boundary");
+						break;
+			
+					} else {
+						
+					
+						print ("Created another path");
+					}
+
+
+					count--;
+				}
+
+				*/
+
+			
+
+			//}
 		
 
 
-			foreach (Node tmp in fullPath) {
+			foreach (Node tmp in temp) {
 				print ("X: " + tmp.x + " " + "Y " + tmp.y);
 			}
 
@@ -88,8 +111,24 @@ public class MapGeneration : MonoBehaviour {
 
 	}
 
-	List<Node> PathForHighway(int x, int y, List<Node> fullPath){
+	List<Node> PathForHighway(int x,int y){
+		List<Node> firstPath = new List<Node> ();
 
+
+
+
+
+
+
+
+		return firstPath;
+	}
+
+
+
+	/*
+	List<Node> PathForHighway(int x, int y){
+		List<Node> fullPath = new List<Node> ();
 		Debug.Log ("BE|ER");
 		int prob = ProbOfPath ();
 
@@ -126,9 +165,10 @@ public class MapGeneration : MonoBehaviour {
 					break;
 				default:
 					//down
-					for (int t = 0; t < 20; t++) {
+				for (int t = 0; t < 20; t++) {
 						x++;
 						map [x, y] = "a";
+						
 						Node tmp = new Node ();
 						tmp.x = x;
 						tmp.y = y;
@@ -273,6 +313,8 @@ public class MapGeneration : MonoBehaviour {
 
 		return fullPath;
 	}
+
+*/
 //
 //	bool validCheck(int x, int highVal){
 //		

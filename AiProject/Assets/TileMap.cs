@@ -13,6 +13,7 @@ public class TileMap : MonoBehaviour {
 
     int[,] tiles;
     Node[,] graph;
+	int[,] tilesMap;
 
     //List<Node> currentPath = null;
 
@@ -21,6 +22,27 @@ public class TileMap : MonoBehaviour {
 
     //Use this for initialization
     void Start() {
+
+		string[] lines = File.ReadAllLines(@"test.txt", Encoding.UTF8);
+		for (int i = 2; i < lines.Length; i++) {
+			//print(lines[i]);
+		}
+
+//		for (int i = 0; i < lines.Length; i++) {
+//			for (int j = 0; j < lines.Length; j++) {
+//				tilesMap [i] [j] = lines [i].IndexOf(j);
+//			}
+//			
+//		}
+//
+//		for (int i = 0; i < lines.Length; i++) {
+//			for (int j = 0; j < lines.Length; j++) {
+//				print (tilesMap [i] [j]);
+//			}
+//
+//		}
+
+
 
         //set up the selectedUnit's variable
         selectedUnit.GetComponent<Unit>().tileX = (int)selectedUnit.transform.position.x;
@@ -51,6 +73,7 @@ public class TileMap : MonoBehaviour {
         }
 
         //u shaped mountain range
+
         tiles[4, 4] = 2;
         tiles[5, 4] = 2;
         tiles[6, 4] = 2;
