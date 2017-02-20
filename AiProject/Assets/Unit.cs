@@ -31,7 +31,25 @@ public class Unit : MonoBehaviour {
 
 
     }
-
+//	//printCurrentPath prints the currentPath node list 
+//	public void printCurrentPath()
+//	{
+//		if (currentPath != null) 
+//		{
+//			
+//			using (System.IO.StreamWriter file = 
+//				new System.IO.StreamWriter (@"/Users/qasimabbas/Documents/QasimMaps/AiProject/listOfNodes.txt")) 
+//			{
+//				file.writeLine("Current Path:");
+//				foreach (Node n in currentPath) 
+//				{
+//					file.WriteLine (n.x + " " + n.y);
+//				}
+//			}
+//		}
+//		return;
+//	}
+//
     public void MoveNextTile() {
         float remainingMovement = moveSpeed;
         while (remainingMovement > 0) {
