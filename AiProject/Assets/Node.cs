@@ -6,6 +6,16 @@ public class Node {
     public List<Node> neighbors;
     public int x;
     public int y;
+	public enum direction{
+		none,
+		right,
+		left,
+		up,
+		down
+
+	};
+
+
 
     public Node() {
         neighbors = new List<Node>();

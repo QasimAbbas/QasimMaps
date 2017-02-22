@@ -404,6 +404,11 @@ public class MapGeneration : MonoBehaviour {
 			print (startHighWay[0] + " , " + startHighWay[1]);
 			map [startHighWay [0], startHighWay [1]] = "a";
 
+
+
+
+
+
 			Node tmp2 = new Node ();
 			tmp2.x = startHighWay [0];
 			tmp2.y = startHighWay [1];

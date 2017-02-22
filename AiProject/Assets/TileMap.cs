@@ -248,7 +248,8 @@ public class TileMap : MonoBehaviour {
 		return tileTypes[tiles[x, y]].isWalkable;
 	}
 
-	public void GeneratePathToD(int x, int y) {
+
+	public void GeneratePathToUsingDijkstra(int x, int y) {
 		//clear out our unit's old path
 		selectedUnit.GetComponent<Unit> ().currentPath = null;
 
@@ -264,14 +265,14 @@ public class TileMap : MonoBehaviour {
 		List<Node> unvisited = new List<Node> ();
 
 		Node source = graph [
-			              selectedUnit.GetComponent<Unit> ().tileX, 
-			              selectedUnit.GetComponent<Unit> ().tileY
-		              ];
+			selectedUnit.GetComponent<Unit> ().tileX, 
+			selectedUnit.GetComponent<Unit> ().tileY
+		];
 
 		Node goal = graph [
-			            x,
-			            y
-		            ];
+			x,
+			y
+		];
 
 		dist [source] = 0;
 		prev [source] = null;
@@ -342,7 +343,24 @@ public class TileMap : MonoBehaviour {
 
 	}
 
-	public void GeneratePathTo(int x, int y) {
+	void ShowVisualTiles(List<Node> visited){
+
+
+		foreach(Node s in visited){
+			UnityEngine.Object[] objs = UnityEngine.Object.FindObjectsOfType(typeof(GameObject));
+			GameObject myObject = null;
+			foreach (GameObject go in objs) {
+				if (go.transform.position == TileCoordToWorldCoord(s.x,s.y)) {
+					myObject = go;
+					myObject.GetComponent<Renderer> ().material.color = Color.green;
+
+					break;
+				}
+			}
+		}
+	}
+
+	public void GeneratePathToUsingAStar(int x, int y) {
 		//clear out our unit's old path
 		//selectedUnit.GetComponent<Unit>().currentPath = null;
 
@@ -393,11 +411,13 @@ public class TileMap : MonoBehaviour {
 
 			if (s == goal) {
 				print("path found");
+
+				//ShowVisualTiles (visited);
 				return;
 			}
-				
- 
 
+			//ShowVisualTiles (s);
+			//ShowVisualTiles(currentPath);
 			UnityEngine.Object[] objs = UnityEngine.Object.FindObjectsOfType(typeof(GameObject));
 			GameObject myObject = null;
 			foreach (GameObject go in objs) {
@@ -411,8 +431,8 @@ public class TileMap : MonoBehaviour {
 
 			visited.Add(s);
 
-		for (int i = 0; i < s.neighbors.Count; i++) { 
-			Node sprime = s.neighbors [i];
+			for (int i = 0; i < s.neighbors.Count; i++) { 
+				Node sprime = s.neighbors [i];
 				if (!visited.Contains(sprime)) {
 					if (!fringe.Contains(sprime)) {
 						dist[sprime] = Mathf.Infinity;
@@ -425,10 +445,176 @@ public class TileMap : MonoBehaviour {
 						dist[sprime] = dist[s] + CostToEnterTile(s.x, s.y, sprime.x, sprime.y);
 						parent = s;
 						currentPath.Add(parent);
-//						selectedUnit.GetComponent<Unit>().currentPath = currentPath;
+						//						selectedUnit.GetComponent<Unit>().currentPath = currentPath;
 
 						if (fringe.Contains(sprime)) {
-							
+
+							fringe.Remove(sprime);
+						}
+
+						fringe.Enqueue(sprime, dist[sprime] + sprime.DistanceTo(goal));
+					}
+				}
+			}
+		}
+
+		print("no path found");
+
+
+
+		return;
+	}
+
+
+	public void GeneratePathToUsingUCS(int x, int y) {
+		//clear out our unit's old path
+		selectedUnit.GetComponent<Unit>().currentPath = null;
+
+		if (UnitCanEnterTile(x, y) == false) {
+			//we probably clicked on a mountain or something, so just quit out
+			print("error: cannot travel there");
+			return;
+		}
+
+		//what is a dictionary
+		Dictionary<Node, float> dist = new Dictionary<Node, float>();
+
+
+		//Uniform Cost Search
+		//Setup the Q - unvisited nodes
+		SimplePriorityQueue<Node, float> fringe = new SimplePriorityQueue<Node, float>();
+		List<Node> visited = new List<Node>();
+
+		//not used?
+		List<Node> currentPath = new List<Node>();
+
+		Node start = graph[
+			selectedUnit.GetComponent<Unit>().tileX,
+			selectedUnit.GetComponent<Unit>().tileY
+		];
+
+		Node s = graph[
+			selectedUnit.GetComponent<Unit>().tileX,
+			selectedUnit.GetComponent<Unit>().tileY
+		];
+
+		Node goal = graph[
+			x,
+			y
+		];
+
+		dist[start] = 0;
+		fringe.Enqueue(start, dist[start]);
+
+		while (fringe.Count > 0) {
+			s = fringe.Dequeue();
+
+			if (s == goal) {
+				print("path found");
+				//ShowVisualTiles (visited);
+				return;
+			}
+
+
+
+			visited.Add(s);
+
+			foreach (Node sprime in s.neighbors) {
+				print ("meow");
+				if (!visited.Contains(sprime) || !fringe.Contains(sprime)) {
+					dist[sprime] = start.DistanceTo(sprime);
+					fringe.Enqueue(sprime, dist[sprime]);
+				} else if (fringe.Contains(sprime)) {
+					currentPath.Add (s);
+					dist[sprime] = start.DistanceTo(sprime);
+					fringe.UpdatePriority(sprime, dist[sprime]);
+
+				}
+
+			}
+
+			//s = sprime; 
+
+		}
+
+		print("no path found");
+		return;
+
+
+	}	public void GeneratePathToUsingWAStar(int x, int y) {
+		//clear out our unit's old path
+		selectedUnit.GetComponent<Unit>().currentPath = null;
+
+		if (UnitCanEnterTile(x, y) == false) {
+			//we probably clicked on a mountain or something, so just quit out
+			print("error: cannot travel there");
+			return;
+		}
+
+		//what is a dictionary
+		Dictionary<Node, float> dist = new Dictionary<Node, float>();
+
+
+		//AStar moved to separate file
+		//Setup the Q - unvisited nodes
+		SimplePriorityQueue<Node, float> fringe = new SimplePriorityQueue<Node, float>();
+
+		List<Node> visited = new List<Node>();
+
+		List<Node> currentPath = new List<Node>();
+
+		Node start = graph[
+			selectedUnit.GetComponent<Unit>().tileX,
+			selectedUnit.GetComponent<Unit>().tileY
+		];
+
+		Node s = graph[
+			selectedUnit.GetComponent<Unit>().tileX,
+			selectedUnit.GetComponent<Unit>().tileY
+		];
+
+		Node goal = graph[
+			x,
+			y
+		];
+
+		dist[start] = 0;
+		Node parent = start;
+		float h = s.DistanceTo(goal);
+		float w = 1.5f;
+		float f = dist[start] + w + h;
+		fringe.Enqueue(start, f);
+
+		while (fringe.Count > 0) {
+			s = fringe.Dequeue();
+
+			if (s == goal) {
+				print("path found");
+				ShowVisualTiles (visited);
+				//ShowVisualTiles(currentPath);
+				return;
+			}
+				
+
+			visited.Add(s);
+			int count = 0;
+			foreach (Node sprime in s.neighbors) {
+				print(count++);
+				if (!visited.Contains(sprime)) {
+					if (!fringe.Contains(sprime)) {
+						dist[sprime] = Mathf.Infinity;
+						parent = null;
+					}
+
+					//update vertex
+					if (dist[s] + CostToEnterTile(s.x, s.y, sprime.x, sprime.y) < dist[sprime]) {
+
+						dist[sprime] = dist[s] + CostToEnterTile(s.x, s.y, sprime.x, sprime.y);
+						parent = s;
+						currentPath.Add(parent);
+						//selectedUnit.GetComponent<Unit>().currentPath = currentPath;
+
+						if (fringe.Contains(sprime)) {
 							fringe.Remove(sprime);
 						}
 
